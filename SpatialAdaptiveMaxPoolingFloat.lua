@@ -12,9 +12,10 @@ void SpatialAdaptiveMaxPooling_updateOutput_frame(float *input_p,
 
 ]]
 
-local C = ffi.load 'libadapt.so'
+local C = ffi.load 'build/libadapt.so'
+--local C = ffi.load(package.searchpath('libadapt', package.cpath))
 
-local SpatialAdaptiveMaxPooling, parent = torch.class('nn.SpatialAdaptiveMaxPooling', 'nn.Module')
+local SpatialAdaptiveMaxPooling, parent = torch.class('nn.SpatialAdaptiveMaxPoolingFloat', 'nn.Module')
 
 function SpatialAdaptiveMaxPooling:__init(W, H)
   parent.__init(self)

@@ -24,7 +24,7 @@ function SpatialPyramidPooling:updateOutput(input)
     self.module = nn.Concat(dimd)
     for i=1,#self.pyr do
       local t = nn.Sequential()
-      t:add(nn.SpatialAdaptivePooling(self.pyr[i][1],self.pyr[i][2]))
+      t:add(nn.SpatialAdaptiveMaxPooling(self.pyr[i][1],self.pyr[i][2]))
       t:add(nn.Reshape(self.pyr[i][1]*self.pyr[i][2]*self.inputDepth))
       self.module:add(t)
     end
@@ -48,7 +48,7 @@ function SpatialPyramidPooling:updateGradInput(input, gradOutput)
     self.module = nn.Concat(dimd)
     for i=1,#self.pyr do
       local t = nn.Sequential()
-      t:add(nn.SpatialAdaptivePooling(self.pyr[i][1],self.pyr[i][2]))
+      t:add(nn.SpatialAdaptiveMaxPooling(self.pyr[i][1],self.pyr[i][2]))
       t:add(nn.Reshape(self.pyr[i][1]*self.pyr[i][2]*self.inputDepth))
       self.module:add(t)
     end

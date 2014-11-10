@@ -1,14 +1,14 @@
 local ffi = require 'ffi'
 
-local SpatialAdaptivePooling, parent = torch.class('nn.SpatialAdaptivePooling', 'nn.Module')
+local SpatialAdaptiveMaxPooling, parent = torch.class('nn.SpatialAdaptiveMaxPooling', 'nn.Module')
 
 ffi.cdef[[
 void SpatialAdaptiveMaxPooling_updateOutput(THCudaTensor* input, THCudaTensor* output, THCudaTensor* indices, int kW, int kH);
 ]]
 
-local C = ffi.load './build/libadapt.so'
+local C = ffi.load '/opt/rocks/torch-nn/build/libadapt.so'
 
-function SpatialAdaptivePooling:__init(W, H)
+function SpatialAdaptiveMaxPooling:__init(W, H)
   parent.__init(self)
   
   self.W = W
@@ -20,7 +20,7 @@ function SpatialAdaptivePooling:__init(W, H)
   self:cuda()
 end
 
-function SpatialAdaptivePooling:updateOutput(input)
+function SpatialAdaptiveMaxPooling:updateOutput(input)
   -- its always in batch mode
   --local batchMode = input:nDimension() == 4 and true or false
   
@@ -48,7 +48,7 @@ function SpatialAdaptivePooling:updateOutput(input)
   return self.output
 end
 
-function SpatialAdaptivePooling:updateGradInput(input, gradOutput)
+function SpatialAdaptiveMaxPooling:updateGradInput(input, gradOutput)
 
   local dimw = 3
   local dimh = 2
@@ -74,7 +74,7 @@ function SpatialAdaptivePooling:updateGradInput(input, gradOutput)
 end
 
 
-function SpatialAdaptivePooling:empty()
+function SpatialAdaptiveMaxPooling:empty()
   self.gradInput:resize()
   self.gradInput:storage():resize(0)
   self.output:resize()

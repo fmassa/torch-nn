@@ -1,12 +1,23 @@
+local ffi = require 'ffi'
+
 local SpatialAdaptivePooling, parent = torch.class('nn.SpatialAdaptivePooling', 'nn.Module')
+
+ffi.cdef[[
+void SpatialAdaptiveMaxPooling_updateOutput(THCudaTensor* input, THCudaTensor* output, THCudaTensor* indices, int kW, int kH);
+]]
+
+local C = ffi.load './build/libadapt.so'
 
 function SpatialAdaptivePooling:__init(W, H)
   parent.__init(self)
   
   self.W = W
   self.H = H
+
+  self.output = torch.Tensor()
   
   self.indices = torch.Tensor()
+  self:cuda()
 end
 
 function SpatialAdaptivePooling:updateOutput(input)
@@ -32,7 +43,8 @@ function SpatialAdaptivePooling:updateOutput(input)
   self.dH = math.floor(kH)
   
   --input.nn.SpatialMaxPoolingCUDA_updateOutput(self, input)
-  input.nn.SpatialMaxPooling_updateOutput(self, input)
+  --input.nn.SpatialMaxPooling_updateOutput(self, input)
+  C['SpatialAdaptiveMaxPooling_updateOutput'](input:cdata(), self.output:cdata(), self.indices:cdata(), self.W, self.H)
   return self.output
 end
 

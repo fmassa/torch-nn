@@ -15,3 +15,17 @@ moduleF = nn.SpatialAdaptiveMaxPoolingFloat(4,4):float()
 
 outF = moduleF:forward(inputF)
 
+
+--
+
+require 'cunn'
+dofile 'LocalResponseNormalization.lua'
+
+m = nn.LocalResponseNormalization():cuda()
+
+x = torch.rand(1,1,5,5)*256-128
+
+print(x)
+
+y = m:forward(x:cuda())
+print(y)

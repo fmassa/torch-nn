@@ -10,15 +10,19 @@ void SpatialAdaptiveMaxPooling_updateOutput_frame(float *input_p,
                                                       long iwidth, long iheight,
                                                       long owidth, long oheight);
 
+void SpatialAdaptiveMaxPooling_updateOutput(THCudaTensor* input,
+                                            THCudaTensor* output,
+                                            THCudaTensor* indices,
+                                            int kW, int kH);
 ]]
 
 local C = ffi.load '/opt/torch7/torch-nn/build/libadapt.so'
 --local C = ffi.load 'build/libadapt.so'
 --local C = ffi.load(package.searchpath('libadapt', package.cpath))
 
-local SpatialAdaptiveMaxPoolingFloat, parent = torch.class('nn.SpatialAdaptiveMaxPoolingFloat', 'nn.Module')
+local SpatialAdaptiveMaxPoolingComplete, parent = torch.class('nn.SpatialAdaptiveMaxPoolingComplete', 'nn.Module')
 
-function SpatialAdaptiveMaxPoolingFloat:__init(W, H)
+function SpatialAdaptiveMaxPoolingComplete:__init(W, H)
   parent.__init(self)
   
   self.W = W
@@ -30,7 +34,7 @@ function SpatialAdaptiveMaxPoolingFloat:__init(W, H)
   self.indices = torch.Tensor()
 end
 
-function SpatialAdaptiveMaxPoolingFloat:updateOutput(input)
+function SpatialAdaptiveMaxPoolingComplete:updateOutput(input)
   local dimw = 3
   local dimh = 2
   local nslices = input:size(1)
@@ -52,12 +56,21 @@ function SpatialAdaptiveMaxPoolingFloat:updateOutput(input)
     input = input:contiguous()
   end
  
-  C['SpatialAdaptiveMaxPooling_updateOutput_frame'](input:data(), self.output:data(), nslices, input:size(dimw), input:size(dimh), self.W, self.H)  
-  
+  if self.output:type() == 'torch.FloatTensor' then
+    C['SpatialAdaptiveMaxPooling_updateOutput_frame'](input:data(), 
+                                self.output:data(), nslices, input:size(dimw), 
+                                input:size(dimh), self.W, self.H)
+  elseif self.output:type() == 'torch.CudaTensor' then
+    C['SpatialAdaptiveMaxPooling_updateOutput'](input:cdata(), 
+                                self.output:cdata(), self.indices:cdata(),
+                                self.W, self.H)
+  else
+    error('Non supported type')
+  end
   return self.output
 
 end
 
-function SpatialAdaptiveMaxPoolingFloat:updateGradInput(input, gradOutput)
+function SpatialAdaptiveMaxPoolingComplete:updateGradInput(input, gradOutput)
   error('Not yet implemented')
 end

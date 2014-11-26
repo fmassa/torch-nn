@@ -19,14 +19,14 @@ void SpatialAdaptiveMaxPooling_updateOutput_frame(real *input_p,
       int y_start = (int)floor((real)i / oheight * iheight);
       int y_end   = (int)ceil((real)(i + 1) / oheight * iheight);
       int kH = y_end-y_start;
-      
+//printf(" y_start %i y_end %i\n",y_start,y_end);      
       for(j = 0; j < owidth; j++)
       {
         
         int x_start = (int)floor((real)j / owidth * iwidth);
         int x_end   = (int)ceil((real)(j + 1) / owidth * iwidth);
         int kW = x_end-x_start;
-        
+//printf("  x_start %i x_end %i\n",x_start,x_end);        
         /* local pointers */
         real *ip = input_p   + k*iwidth*iheight + y_start*iwidth + x_start;
         real *op = output_p  + k*owidth*oheight + i*owidth + j;

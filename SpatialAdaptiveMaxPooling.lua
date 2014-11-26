@@ -6,8 +6,8 @@ ffi.cdef[[
 void SpatialAdaptiveMaxPooling_updateOutput(THCudaTensor* input, THCudaTensor* output, THCudaTensor* indices, int kW, int kH);
 ]]
 
---local C = ffi.load '/opt/rocks/torch-nn/build/libadapt.so'
-local C = ffi.load 'build/libadapt.so'
+local C = ffi.load '/opt/torch7/torch-nn/build/libadapt.so'
+--local C = ffi.load 'build/libadapt.so'
 --local C = ffi.load(package.searchpath('libadapt', package.cpath))
 
 function SpatialAdaptiveMaxPooling:__init(W, H)
@@ -33,6 +33,11 @@ function SpatialAdaptiveMaxPooling:updateOutput(input)
   
   assert(input:size(dimw)>=self.W, "input width should be greater or equal than W")
   assert(input:size(dimh)>=self.H, "input height should be greater or equal than H")
+  
+  --local input = input
+  --if not input:isContiguous() then
+  --  input = input:contiguous()
+  --end
   
   --input.nn.SpatialMaxPoolingCUDA_updateOutput(self, input)
   --input.nn.SpatialMaxPooling_updateOutput(self, input)

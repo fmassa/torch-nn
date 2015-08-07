@@ -18,10 +18,11 @@ INCLUDE_DIRECTORIES(
 )
 
 LINK_DIRECTORIES(${TH_INSTALL_LIB}})
-ADD_LIBRARY(sse_optim_static STATIC sseAdd.c)
-ADD_LIBRARY(sse_optim SHARED sseAdd.c)
+#ADD_LIBRARY(sse_optim_static STATIC sse.c)
+ADD_LIBRARY(sse_optim SHARED sse.c)
+
 
 #ADD_EXECUTABLE(test_networks src/test.cpp)
 
-TARGET_LINK_LIBRARIES(sse_optim_static TH)
+#TARGET_LINK_LIBRARIES(sse_optim_static TH)
 TARGET_LINK_LIBRARIES(sse_optim TH)

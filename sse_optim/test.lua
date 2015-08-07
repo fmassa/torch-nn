@@ -1,7 +1,14 @@
 dofile 'sse.lua'
 
-budget = 1e7*100
-n = 1e3
+cmd = torch.CmdLine()
+cmd:option('-n',2e7,'Size of the tensor')
+cmd:option('-budget',1e9,'nb of iterations = budget/n')
+opt = cmd:parse(arg or {})
+
+print(opt)
+
+budget = opt.budget
+n = opt.n
 iter = budget/n
 
 a = torch.ones(n)

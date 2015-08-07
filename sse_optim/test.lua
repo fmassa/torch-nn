@@ -13,7 +13,7 @@ iter = budget/n
 
 a = torch.ones(n)
 print('Warming up')
-for i=1,10 do
+for i=1,5 do
   sseMul(a,1.0)
   Mul(a,1.0)
   parMul(a,1.0)

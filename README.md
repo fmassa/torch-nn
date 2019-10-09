@@ -1,7 +1,7 @@
 torch-nn
 ========
 
-Aditional functionnalities for torch7 neural networks
+Additional functionnalities for torch7 neural networks
 
 The following modules were merged to different repositories
 
